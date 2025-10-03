@@ -9,14 +9,30 @@ const {storage}=require("../cloudConfig.js");
 const upload = multer({ storage });
 
 //index and create route
-router.route("/")
-.get(wrapAsync(listingController.index))
-.post(isLoggedIn,validateListing,upload.single("listing[image]"),
-    wrapAsync(listingController.createListing))
-.post((req,res)=>{
-    res.send(req.file);
-})
+// router.route("/")
+// .get(wrapAsync(listingController.index))
+// .post(isLoggedIn,validateListing,upload.single("listing[image]"),
+//     wrapAsync(listingController.createListing))
+// .post((req,res)=>{
+//     res.send(req.file);
+// })
 
+router.route("/")
+  // GET all listings (with optional category filter)
+  .get(wrapAsync(listingController.index))
+
+  // POST new listing with image upload
+  .post(
+    isLoggedIn,
+    validateListing,
+    upload.single("listing[image]"),
+    wrapAsync(listingController.createListing)
+  );
+
+// If you want to debug the uploaded file separately:
+router.post("/debug-upload", upload.single("listing[image]"), (req, res) => {
+  res.send(req.file);
+});
 
 
 //new route
