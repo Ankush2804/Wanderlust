@@ -42,9 +42,9 @@ module.exports.index = async (req, res) => {
   let listings;
 
   if (category) {
-    listings = await Listing.find({ category });
+    listings = await Listing.find({ category }).populate("owner");
   } else {
-    listings = await Listing.find({});
+    listings = await Listing.find({}).populate("owner");
   }
 
   res.render("listings/index.ejs", { listings, categories,category: null  });
@@ -66,7 +66,7 @@ module.exports.searchListing = async (req, res) => {
                     { title: { $regex: query, $options: "i" } },
                     { country: { $regex: query, $options: "i" } },
                 ]
-            });
+            }).populate("owner");
         }
 
         // Render the same index.ejs template to reuse layout
@@ -104,6 +104,11 @@ module.exports.createListing=async (req,res,next)=>{
     limit: 1,
     })
     .send();
+    if (response.body.features.length === 0) {
+        req.flash("error", "Please enter a valid location.");
+        return res.redirect("/listings/new");
+    }
+
     let url=req.file.path;
     let filename=req.file.filename;
     const newListing=new Listing(req.body.listing);
