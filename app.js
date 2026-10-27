@@ -27,7 +27,13 @@ app.set("views",path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname,"/public")));
 app.engine('ejs', ejsMate);
 
-const dbUrl=process.env.ATLASDB_URL;
+const dbUrl = process.env.ATLASDB_URL;
+
+console.log("ATLASDB_URL exists:", Boolean(dbUrl));
+console.log("MongoDB URL has valid prefix:",
+    dbUrl?.startsWith("mongodb://") ||
+    dbUrl?.startsWith("mongodb+srv://")
+);
 
 main().then(()=>{
     console.log("connected to DB");
