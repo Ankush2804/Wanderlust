@@ -14,7 +14,13 @@ const dbUrl = process.env.ATLASDB_URL;
 async function seedDB() {
   await Listing.deleteMany({});
 
-  const owner = await User.findOne({ username: "ankush" });
+ const owner = await User.findOne({ username: "ankush" });
+
+if (!owner) {
+  throw new Error(
+    'Owner "ankush" not found. Create or verify the user in Atlas first.'
+  );
+}
 
   const listingsWithOwner = [];
   for (let obj of initData.data) {
